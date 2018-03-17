@@ -11,10 +11,13 @@ dll.o:
 
 dlltest: integer.o  dll.o
 	$(CC) $(CFLAGS) dll-0-0.c
-	$(CC) $(LFLAGS) integer.o dll.o dll-0-0.o -o dlltest
-
+	$(CC) $(CFLAGS) dll-4-10.c
+	$(CC) $(LFLAGS) integer.o dll.o dll-0-0.o -o dlltest0
+	$(CC) $(LFLAGS) integer.o dll.o dll-4-10.o -o dlltest1
+	
 test: dlltest
-	@./dlltest
+	@./dlltest0
+	@./dlltest1
 valgrind: dlltest
 	@./valgrind dlltest
 clean:

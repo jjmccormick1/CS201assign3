@@ -197,10 +197,10 @@ void displayDLLdebug(DLL *items,FILE *file)
                 fprintf(file,",");
 	        current = getNODEnext(current);
 	    }
-	    printf("}, tail->{");
+	    printf("},tail->{");
         if(items->size > 0)
         {
-            items->display(getNODEvalue(current),file);
+            items->display(getNODEvalue(items->tail),file);
         }
         
 	    printf("}");
@@ -211,10 +211,11 @@ void freeDLL(DLL *items)
     for(int i = 0; i < items->size; i++)
     {
             NODE * temp = getNODEnext(current);
-            items->free(current);
+            freeNODE(current, items->free);
+            //free(current);
             current = temp;
     }
-    free(items);
+    //free(items);
     return;
 }
 
