@@ -14,6 +14,7 @@ struct binomial {
 };
 typedef struct binnode {
     void * value;
+    int freq;
     BINNODE * parent;
     DLL * children;
 }BINNODE;
@@ -35,6 +36,7 @@ BINNODE * newBINNODE(BINOMIAL * b,void * value)
         BINNODE * node = malloc(sizeof(BINNODE));
         node->value = value;
         node->parent = node;
+        node->freq = 1;
         node->children = newDLL(b->display, b->free);
 }
 
@@ -43,12 +45,13 @@ void *insertBINOMIAL(BINOMIAL * b,void * value)
     BINNODE newNode = newBINNODE(b, value);
     insertDLL(b->roots, newNode);
     b->size++;
-    
+    //Cnsolodate
+    return newNode;
 }
 
 int sizeBINOMIAL(BINOMIAL *b)
 {
-    
+    return b->size;
 }
 
 void unionBINOMIAL(BINOMIAL * b,BINOMIAL * donor)
@@ -60,8 +63,20 @@ void unionBINOMIAL(BINOMIAL * b,BINOMIAL * donor)
     donor->extreme = NULL;
     //consolodate root list using comparator
 }
-    extern void deleteBINOMIAL(BINOMIAL *b,void *node);
-    extern void decreaseKeyBINOMIAL(BINOMIAL *b,void *node,void *value);
+
+void deleteBINOMIAL(BINOMIAL *b,void *node)
+{
+    
+}
+
+void bubbleUp(BINOMIAL * b, BINNODE * n)
+{
+    
+}
+void decreaseKeyBINOMIAL(BINOMIAL *b,void *node,void *value)
+{
+    
+}
     extern void *peekBINOMIAL(BINOMIAL *b);
     extern void *extractBINOMIAL(BINOMIAL *b);
     extern void statisticsBINOMIAL(BINOMIAL *b,FILE *fp);
