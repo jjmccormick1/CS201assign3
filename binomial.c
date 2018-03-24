@@ -2,6 +2,7 @@
 #include "binomial.h"
 
 BINNODE * newBINNODE( BINOMIAL*,void *);
+void bubbleUp(BINOMIAL *, BINNODE *);
 
 struct binomial {
     DLL * roots;
@@ -42,7 +43,7 @@ BINNODE * newBINNODE(BINOMIAL * b,void * value)
 
 void *insertBINOMIAL(BINOMIAL * b,void * value)
 {
-    BINNODE newNode = newBINNODE(b, value);
+    BINNODE * newNode = newBINNODE(b, value);
     insertDLL(b->roots, newNode);
     b->size++;
     //Cnsolodate
@@ -64,21 +65,42 @@ void unionBINOMIAL(BINOMIAL * b,BINOMIAL * donor)
     //consolodate root list using comparator
 }
 
-void deleteBINOMIAL(BINOMIAL *b,void *node)
+void deleteBINOMIAL(BINOMIAL *b,void * node)
 {
-    
+    decreaseKeyBINOMIAL(b, node, NULL);
+    extractBINOMIAL(b);
 }
 
-void bubbleUp(BINOMIAL * b, BINNODE * n)
+void bubbleUp(BINOMIAL * b, void * n)
+{
+    if(getDLL(b->roots, n) != NULL)
+        return n;
+    else if(b->compare(n->value , (n->parent)->value) > 0 )
+        return n;
+    else
+    {
+        n->parent = (n->parent)->parent;
+        n->parent = n;
+        b->swapper(n->value, (n->parent)->value);
+        return bubbleUp(b, n->parent);
+    }
+}
+void decreaseKeyBINOMIAL(BINOMIAL *b,BINNODE * node,void *value)
+{
+    node->value = value;
+    bubbleUp(b, node);
+    int cmp = b->compare((b->extreme)->value, value)
+    if(cmp < 0)
+        b->extreme = node;
+}
+void *peekBINOMIAL(BINOMIAL *b)
+{
+    return (b->extreme)->value;
+}
+void *extractBINOMIAL(BINOMIAL *b)
 {
     
 }
-void decreaseKeyBINOMIAL(BINOMIAL *b,void *node,void *value)
-{
-    
-}
-    extern void *peekBINOMIAL(BINOMIAL *b);
-    extern void *extractBINOMIAL(BINOMIAL *b);
     extern void statisticsBINOMIAL(BINOMIAL *b,FILE *fp);
     extern void displayBINOMIAL(BINOMIAL *b,FILE *fp);
     extern void displayBINOMIALdebug(BINOMIAL *b,FILE *fp);
