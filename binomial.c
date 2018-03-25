@@ -1,13 +1,16 @@
 #include "dll.h"
 #include "binomial.h"
+#include <math.h>
 
 BINNODE * newBINNODE( BINOMIAL*,void *);
 void bubbleUp(BINOMIAL *, BINNODE *);
+void updateConsolidationArray(BINNODE * arr[], BINNODE * spot);
+void combine(BINOMIAL * b, BINNODE * x, BINNODE * y);
 
 struct binomial {
     DLL * roots;
     int size;
-    NODE * extreme;
+    BINNODE * extreme;
     void (*display)(void *, FILE *);
     int (*compare)(void *, void *);
     void (*swapper)(void *, void *);
@@ -99,9 +102,76 @@ void *peekBINOMIAL(BINOMIAL *b)
 }
 void *extractBINOMIAL(BINOMIAL *b)
 {
+    BINNODE * extremeNode = b->extreme;
+    removeDLL
+}
+void consolidate(BINOMIAL * b)
+{
+    int arrsize = log2(sizeBINOMIAL(b)) + 1;
+    BINNODE * array[arrsize];
+    for(int i = 0; i < arrsize; i++)
+    {
+        array[i] = NULL;
+    }
+    
+    while(sizeDLL(b->roots) > 0)
+    {
+        BINNODE * spot = removeDLL(b->roots,0);
+        updateConsolidationArray(array, spot);
+    }
+    
+    b->extreme = NULL;
+    for(int i = 0; i < arrsize; i++)
+    {
+        if(array[i] != NULL)
+        {
+            insertDLL(b->roots, array[i], 0);
+            if(b->extreme == NULL || b->compare(array[i]->value , b->extreme) > 0)
+                b->extreme = array[i];
+        }
+    }
+        
+}
+void updateConsolidationArray(BINNODE * arr[], BINNODE * spot)
+{
+    int degree = sizeDLL(spot->children);
+    while(arr[degree] != NULL)
+    {
+        spot = combine(b, spot, arr[degree]);
+        arr[degree] = NULL;
+        degree++;
+    }
+    arr[degree] = spot;
+}
+
+void combine(BINOMIAL * b, BINNODE * x, BINNODE * y)
+{
+    if(b->compare(x->value , y->value) > 0)
+    {
+        insertDLL(x->children, y);
+        y->parent = x;
+        return x;
+    }
+    else
+    {
+        insertDLL(y->children, x);
+        x->parent = y;
+        return y;
+    }
+}
+void statisticsBINOMIAL(BINOMIAL *b,FILE *fp)
+{
+    fprintf(fp, "size: %d\n", sizeBINOMIAL(b));
+    fprintf(fp, "rootlist size: %d\n", sizeDLL(b->roots));
+    if(b->extreme != NULL)
+    {
+        fprintf(fp, "extreme: ");
+        b->display( (b->extreme)->value, fp);
+    }
+}
+void displayBINOMIAL(BINOMIAL *b,FILE *fp)
+{
     
 }
-    extern void statisticsBINOMIAL(BINOMIAL *b,FILE *fp);
-    extern void displayBINOMIAL(BINOMIAL *b,FILE *fp);
     extern void displayBINOMIALdebug(BINOMIAL *b,FILE *fp);
     extern void freeBINOMIAL(BINOMIAL *b); 
