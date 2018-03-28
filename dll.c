@@ -14,6 +14,7 @@ struct dll
     NODE *head;
     NODE *tail;
     int size;
+    NODE * iterator;
     void (*display)(void *,FILE *);
     void (*free)(void *);
 };
@@ -27,6 +28,7 @@ DLL *newDLL(void (*d)(void *,FILE *),void (*f)(void *))
         items->head = 0;
         items->tail = 0;
         items->size = 0;
+        items->iterator = 0;
         items->display = d;
         items->free = f;
         return items;
@@ -211,13 +213,81 @@ void freeDLL(DLL *items)
     for(int i = 0; i < items->size; i++)
     {
             NODE * temp = getNODEnext(current);
-            freeNODE(current, items->free);
-            //free(current);
+            //freeNODE(current, items->free);
+            free(current);
             current = temp;
     }
     //free(items);
     return;
 }
+
+void removeDLLall(DLL * dll)
+{
+    NODE * current = dll->head;
+    for(int i = 0; i < dll->size; i++)
+    {
+            NODE * temp = getNODEnext(current);
+            free(current);
+            current = temp;
+    }
+    dll->head = NULL;
+    dll->tail = NULL;
+    dll->size = 0;
+    return;
+}
+void *removeDLLnode(DLL * dll, void * in)
+{
+    NODE * node = in;
+    void * retval = getNODEvalue(node);
+    if(node == dll->head)
+    {
+        dll->head = getNODEnext(node);
+    }
+    else if(node == dll->tail)
+    {
+        dll->tail = getNODEprev(node);
+    }
+    else
+    {
+        setNODEnext( getNODEprev(node) , getNODEnext(node) );
+        setNODEprev( getNODEnext(node) , getNODEprev(node) );
+    }
+    free(node);
+    return retval;
+}
+void firstDLL(DLL * dll)
+{
+    dll->iterator = dll->head;
+}
+void lastDLL(DLL * dll)
+{
+    dll->iterator = dll->tail;
+}
+int moreDLL(DLL * dll)
+{
+    if(dll->iterator == NULL)
+        return 0;
+    else 
+        return 1;
+}
+void nextDLL(DLL * dll)
+{
+    if(dll->iterator != NULL)
+        dll->iterator = getNODEnext(dll->iterator);
+}
+void prevDLL(DLL * dll )
+{
+     if(dll->iterator != NULL)
+        dll->iterator = getNODEnext(dll->iterator);
+}
+void * currentDLL(DLL * dll)
+{
+    if(dll->iterator == NULL)
+        return NULL;
+    return getNODEvalue(dll->iterator);
+}
+
+
 
 //node.c here for privacy
 struct node

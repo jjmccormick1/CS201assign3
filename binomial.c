@@ -1,11 +1,21 @@
 #include "dll.h"
 #include "binomial.h"
+#include "queue.h"
+#include <stdlib.h>
 #include <math.h>
+
+struct binnode {
+    void * value;
+    int freq;
+    BINNODE * parent;
+    DLL * children;
+};
 
 BINNODE * newBINNODE( BINOMIAL*,void *);
 void bubbleUp(BINOMIAL *, BINNODE *);
-void updateConsolidationArray(BINNODE * arr[], BINNODE * spot);
+void updateConsolidationArray(BINOMIAL *,BINNODE * arr[], BINNODE * spot);
 void combine(BINOMIAL * b, BINNODE * x, BINNODE * y);
+void displayDebugRecurse(BINNODE * node);
 
 struct binomial {
     DLL * roots;
@@ -16,12 +26,8 @@ struct binomial {
     void (*swapper)(void *, void *);
     void (*free)(void *);
 };
-typedef struct binnode {
-    void * value;
-    int freq;
-    BINNODE * parent;
-    DLL * children;
-}BINNODE;
+
+
 
 BINOMIAL *newBINOMIAL(void (*display)(void *,FILE *),int (*compare)(void *,void *),void (*swapper)(void *,void *),void (*free)(void *))
 {
@@ -47,7 +53,7 @@ BINNODE * newBINNODE(BINOMIAL * b,void * value)
 void *insertBINOMIAL(BINOMIAL * b,void * value)
 {
     BINNODE * newNode = newBINNODE(b, value);
-    insertDLL(b->roots, newNode);
+    insertDLL(b->roots,0, newNode);
     b->size++;
     //Cnsolodate
     return newNode;
@@ -74,7 +80,7 @@ void deleteBINOMIAL(BINOMIAL *b,void * node)
     extractBINOMIAL(b);
 }
 
-void bubbleUp(BINOMIAL * b, void * n)
+void bubbleUp(BINOMIAL * b, BINNODE * n)
 {
     if(getDLL(b->roots, n) != NULL)
         return n;
@@ -117,7 +123,7 @@ void consolidate(BINOMIAL * b)
     while(sizeDLL(b->roots) > 0)
     {
         BINNODE * spot = removeDLL(b->roots,0);
-        updateConsolidationArray(array, spot);
+        updateConsolidationArray(b, array, spot);
     }
     
     b->extreme = NULL;
@@ -132,7 +138,7 @@ void consolidate(BINOMIAL * b)
     }
         
 }
-void updateConsolidationArray(BINNODE * arr[], BINNODE * spot)
+void updateConsolidationArray(BINOMIAL * b, BINNODE * arr[], BINNODE * spot)
 {
     int degree = sizeDLL(spot->children);
     while(arr[degree] != NULL)
@@ -154,7 +160,7 @@ void combine(BINOMIAL * b, BINNODE * x, BINNODE * y)
     }
     else
     {
-        insertDLL(y->children, x);
+        insertDLL(y->children,0, x);
         x->parent = y;
         return y;
     }
@@ -171,7 +177,31 @@ void statisticsBINOMIAL(BINOMIAL *b,FILE *fp)
 }
 void displayBINOMIAL(BINOMIAL *b,FILE *fp)
 {
+    fprintf(fp, "rootlist: ");
+    for(int i = 0; i < sizeDLL(b->roots) ; i++)
+    {
+        BINNODE * temp = getDLL(b->roots,i);
+        b->display(temp->value,fp);
+        fprintf(fp, " ");
+    }
+}
+void displayBINOMIALdebug(BINOMIAL *b,FILE *fp)
+{
+    QUEUE * queue = newQUEUE(b->display, NULL);
+    enqueue(queue, b->roots);
+    
+    while(sizeQUEUE(queue) > 0)
+    {
+        int level = sizeQUEUE(queue);
+        while(level > 0)
+        {
+            DLL * outdll = dequeue(queue);
+            
+        }
+    }
+}
+void displayDebugRecurse(BINNODE * node)
+{
     
 }
-    extern void displayBINOMIALdebug(BINOMIAL *b,FILE *fp);
     extern void freeBINOMIAL(BINOMIAL *b); 

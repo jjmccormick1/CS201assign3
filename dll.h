@@ -16,6 +16,14 @@
     extern void displayDLL(DLL *items,FILE *);
     extern void displayDLLdebug(DLL *items,FILE *);
     extern void freeDLL(DLL *items);
+    extern void removeDLLall(DLL *);
+    extern void *removeDLLnode(DLL *, void *);
+    extern void firstDLL(DLL *);
+    extern void lastDLL(DLL *);
+    extern int moreDLL(DLL *);
+    extern void nextDLL(DLL *);
+    extern void prevDLL(DLL *);
+    extern void *currentDLL(DLL *);
 
 typedef struct node NODE; /* forward declaration of our structure */
 
